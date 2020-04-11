@@ -6,8 +6,10 @@ import type4One from '../img/type4/1.jpeg'
 const stacksData = [
   {
     title: 'Doctor',
+    index: 0,
     items: [
       {
+        index: 0,
         image: type1One,
         name: '',
         description: '',
@@ -16,8 +18,10 @@ const stacksData = [
   },
   {
     title: 'Músico',
+    index: 1,
     items: [
       {
+        index: 0,
         image: type2One,
         name: '',
         description: '',
@@ -26,8 +30,10 @@ const stacksData = [
   },
   {
     title: 'Hombre simple',
+    index: 2,
     items: [
       {
+        index: 0,
         image: type3One,
         name: '',
         description: '',
@@ -36,8 +42,10 @@ const stacksData = [
   },
   {
     title: 'Superhéroe',
+    index: 3,
     items: [
       {
+        index: 0,
         image: type4One,
         name: '',
         description: '',

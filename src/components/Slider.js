@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Flickity from 'flickity';
-// import Modernizr from 'modernizr';
 import 'flickity/dist/flickity.min.css';
 
 export default class Slider extends React.Component {
@@ -21,6 +20,8 @@ export default class Slider extends React.Component {
     this.setState({
       flickityReady: true,
     });
+
+    this.flickity.on('cellSelect', this.onCellSelect);
   }
 
   refreshFlickity() {
@@ -50,25 +51,54 @@ export default class Slider extends React.Component {
     }
   }
 
-  // onEndTransition = function( el, callback ) {
-  //   const support = { transitions: Modernizr.csstransitions };
-  //   // transition end event name
-  //   const transEndEventNames = { 'WebkitTransition': 'webkitTransitionEnd', 'MozTransition': 'transitionend', 'OTransition': 'oTransitionEnd', 'msTransition': 'MSTransitionEnd', 'transition': 'transitionend' };
-  //   const transEndEventName = transEndEventNames[ Modernizr.prefixed( 'transition' ) ];
-  //   const onEndCallbackFn = function( ev ) {
-  //     if( support.transitions ) {
-  //       if( ev.target != this ) return;
-  //       this.removeEventListener( transEndEventName, onEndCallbackFn );
-  //     }
-  //     if( callback && typeof callback === 'function' ) { callback.call(this); }
-  //   };
-  //   if( support.transitions ) {
-  //     el.addEventListener( transEndEventName, onEndCallbackFn );
-  //   }
-  //   else {
-  //     onEndCallbackFn();
-  //   }
-  // };
+  onCellSelect = () => {
+    const bodyEl = document.body;
+    bodyEl.classList.remove('item-clickable');
+
+    const stacksWrapper = this.flickityNode.querySelector('.flickity-slider');
+    const stacks = [].slice.call(stacksWrapper.children);
+
+    const prevStack = stacksWrapper.querySelector('.stack-prev');
+    const nextStack = stacksWrapper.querySelector('.stack-next');
+    const selidx = this.flickity.selectedIndex;
+    const cellsCount = this.flickity.cells.length;
+    const previdx = selidx > 0 ? selidx - 1 : cellsCount - 1;
+    const nextidx = selidx < cellsCount - 1 ? selidx + 1 : 0;
+
+    if( prevStack ) {
+      prevStack.classList.remove('stack-prev');
+    }
+    if( nextStack ) {
+      nextStack.classList.remove('stack-next');
+    }
+
+    stacks[previdx].classList.add('stack-prev');
+    stacks[nextidx].classList.add('stack-next');
+  };
+
+
+  onEndTransition = function( el, callback ) {
+    // add this to not trigger eslint no-undef
+    /* global Modernizr */
+    console.log('Modernizr', Modernizr);
+    const support = { transitions: Modernizr.csstransitions };
+    // transition end event name
+    const transEndEventNames = { 'WebkitTransition': 'webkitTransitionEnd', 'MozTransition': 'transitionend', 'OTransition': 'oTransitionEnd', 'msTransition': 'MSTransitionEnd', 'transition': 'transitionend' };
+    const transEndEventName = transEndEventNames[ Modernizr.prefixed( 'transition' ) ];
+    const onEndCallbackFn = function( ev ) {
+      if( support.transitions ) {
+        if( ev.target != this ) return;
+        this.removeEventListener( transEndEventName, onEndCallbackFn );
+      }
+      if( callback && typeof callback === 'function' ) { callback.call(this); }
+    };
+    if( support.transitions ) {
+      el.addEventListener( transEndEventName, onEndCallbackFn );
+    }
+    else {
+      onEndCallbackFn();
+    }
+  };
 
   openStack = () => {
     const bodyEl = document.body;
@@ -84,19 +114,14 @@ export default class Slider extends React.Component {
 
   closeStack = () => {
     const bodyEl = document.body;
-    bodyEl.classList.remove('view-full');
-    // const slider = document.querySelector('.stack-slider');
-    // bodyEl.classList.remove('view-full');
-    // bodyEl.style.height = '';
-    // this.flickity.bindDrag();
-    // this.flickity.options.accessibility = true;
-    //
-    // this.onEndTransition(slider, function() {
-    //   bodyEl.classList.remove('view-full');
-    //   bodyEl.style.height = '';
-    //   this.flickity.bindDrag();
-    //   this.flickity.options.accessibility = true;
-    // });
+    bodyEl.classList.remove('move-items');
+
+    this.onEndTransition(this.flickityNode, function() {
+      bodyEl.classList.remove('view-full');
+      bodyEl.style.height = '';
+    });
+    this.flickity.bindDrag();
+    this.flickity.options.accessibility = true;
   };
 
   renderPortal() {

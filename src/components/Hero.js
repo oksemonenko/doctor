@@ -11,6 +11,9 @@ export default class Hero extends Component {
         transform: null,
       }
     };
+  }
+
+  componentDidMount() {
     window.addEventListener('mousemove', this.onMouseMove);
   }
 

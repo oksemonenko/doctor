@@ -39,6 +39,7 @@ export default class Slider extends React.Component {
     const childrenDidChange = prevProps.children.length !== this.props.children.length;
     const needToOpenStack = !prevProps.stackIsOpened && this.props.stackIsOpened;
     const needToCloseStack = prevProps.stackIsOpened && !this.props.stackIsOpened;
+    const needToChooseStack = prevProps.activeIndex !== this.props.activeIndex;
 
     if (flickityDidBecomeActive || childrenDidChange) {
       this.refreshFlickity();
@@ -49,26 +50,42 @@ export default class Slider extends React.Component {
     if (needToCloseStack) {
       this.closeStack();
     }
+    if (needToChooseStack) {
+      this.chooseStack(this.props.activeIndex);
+    }
   }
+
+  getStackNodes = () => {
+    const stacksWrapper = this.flickityNode.querySelector('.flickity-slider');
+    const stacks = [...stacksWrapper.children];
+    const prevStack = stacksWrapper.querySelector('.stack-prev');
+    const nextStack = stacksWrapper.querySelector('.stack-next');
+    return {
+      stacks,
+      prevStack,
+      nextStack,
+    };
+  };
 
   onCellSelect = () => {
     const bodyEl = document.body;
     bodyEl.classList.remove('item-clickable');
 
-    const stacksWrapper = this.flickityNode.querySelector('.flickity-slider');
-    const stacks = [].slice.call(stacksWrapper.children);
+    const {
+      stacks,
+      prevStack,
+      nextStack,
+    } = this.getStackNodes();
 
-    const prevStack = stacksWrapper.querySelector('.stack-prev');
-    const nextStack = stacksWrapper.querySelector('.stack-next');
     const selidx = this.flickity.selectedIndex;
     const cellsCount = this.flickity.cells.length;
     const previdx = selidx > 0 ? selidx - 1 : cellsCount - 1;
     const nextidx = selidx < cellsCount - 1 ? selidx + 1 : 0;
 
-    if( prevStack ) {
+    if(prevStack) {
       prevStack.classList.remove('stack-prev');
     }
-    if( nextStack ) {
+    if(nextStack) {
       nextStack.classList.remove('stack-next');
     }
 
@@ -83,7 +100,13 @@ export default class Slider extends React.Component {
     console.log('Modernizr', Modernizr);
     const support = { transitions: Modernizr.csstransitions };
     // transition end event name
-    const transEndEventNames = { 'WebkitTransition': 'webkitTransitionEnd', 'MozTransition': 'transitionend', 'OTransition': 'oTransitionEnd', 'msTransition': 'MSTransitionEnd', 'transition': 'transitionend' };
+    const transEndEventNames = {
+      'WebkitTransition': 'webkitTransitionEnd',
+      'MozTransition': 'transitionend',
+      'OTransition': 'oTransitionEnd',
+      'msTransition': 'MSTransitionEnd',
+      'transition': 'transitionend',
+    };
     const transEndEventName = transEndEventNames[ Modernizr.prefixed( 'transition' ) ];
     const onEndCallbackFn = function( ev ) {
       if( support.transitions ) {
@@ -106,7 +129,8 @@ export default class Slider extends React.Component {
     setTimeout(function() {
       bodyEl.classList.add('move-items');
     }, 25);
-    bodyEl.style.height = this.props.stackNode.offsetHeight + 'px';
+    const stackNode = this.props.getStackNode();
+    bodyEl.style.height = stackNode.offsetHeight + 'px';
 
     this.flickity.unbindDrag();
     this.flickity.options.accessibility = false;
@@ -122,6 +146,17 @@ export default class Slider extends React.Component {
     });
     this.flickity.bindDrag();
     this.flickity.options.accessibility = true;
+  };
+
+  chooseStack = (index) => {
+    const { stacks } = this.getStackNodes();
+
+    if(stacks[index].classList.contains('stack-prev')) {
+      this.flickity.previous(true);
+    }
+    if(stacks[index].classList.contains('stack-next')) {
+      this.flickity.next(true);
+    }
   };
 
   renderPortal() {

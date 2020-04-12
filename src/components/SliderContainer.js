@@ -8,6 +8,7 @@ export default class SliderContainer extends Component {
 
     this.state = {
       stackIsOpened: false,
+      activeIndex: 0,
     };
   }
 
@@ -23,11 +24,19 @@ export default class SliderContainer extends Component {
     })
   };
 
-  onClick = (ev) => {
-    ev.preventDefault();
-    const { stackIsOpened } = this.state;
-    console.log('stackIsOpened', stackIsOpened);
+  selectStack = (index) => {
+    this.setState({
+      activeIndex: index,
+    })
+  };
 
+  onClick = (ev, index) => {
+    ev.preventDefault();
+    const { stackIsOpened, activeIndex } = this.state;
+
+    if (index !== activeIndex) {
+      return this.selectStack(index);
+    }
     if (stackIsOpened) {
       return this.closeStack();
     }
@@ -43,13 +52,15 @@ export default class SliderContainer extends Component {
   };
 
   render() {
-    const {stacks} = this.props;
+    const { stacks } = this.props;
+    const { stackIsOpened, activeIndex } = this.state;
     console.log('stacks', stacks);
     return (
       <div className="stack-slider">
         <Slider
-          stackIsOpened={this.state.stackIsOpened}
-          stackNode={this.getRef}
+          stackIsOpened={stackIsOpened}
+          activeIndex={activeIndex}
+          getStackNode={this.getRef}
           options={{
             wrapAround: true,
             imagesLoaded: true,
@@ -68,7 +79,7 @@ export default class SliderContainer extends Component {
                   key={index}
                   title={title}
                   items={items}
-                  onClick={this.onClick}
+                  onClick={(event) => this.onClick(event, index)}
                 />
               );
             },

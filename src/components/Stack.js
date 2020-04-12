@@ -2,11 +2,11 @@ import React from 'react';
 import Item from './Item';
 
 function Stack(props) {
-  const {title, items, storeRef, onClick} = props;
+  const { title, items, onClick } = props;
   console.log('stack', props);
 
   return (
-    <div className="stack" ref={storeRef}>
+    <div className="stack">
       <h2 className="stack-title" onClick={onClick}>
         <a href="#" data-text={title}><span>{title}</span></a>
       </h2>

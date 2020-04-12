@@ -11,7 +11,8 @@
     "scroll": "^2.0.0",
     "react-redux": "^7.2.0",
     "flickity": "^2.2.1",
-    "modernizr": "^3.10.0"
+    "modernizr": "^3.10.0",
+    "smoothscroll": "^0.4.0"
   },
   "scripts": {
     "start": "react-scripts start",

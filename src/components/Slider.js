@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Flickity from 'flickity';
+import smoothscroll from 'smoothscroll';
 import 'flickity/dist/flickity.min.css';
 
 export default class Slider extends React.Component {
@@ -8,6 +9,7 @@ export default class Slider extends React.Component {
     super(props);
 
     this.state = {
+      canOpen: false,
       flickityReady: false,
     };
 
@@ -18,10 +20,13 @@ export default class Slider extends React.Component {
     this.flickity = new Flickity(this.flickityNode, this.props.options || {});
 
     this.setState({
+      canOpen: true,
       flickityReady: true,
     });
 
     this.flickity.on('cellSelect', this.onCellSelect);
+    this.flickity.on('dragStart', this.onDragStart);
+    this.flickity.on('settle', this.onSettle);
   }
 
   refreshFlickity() {
@@ -39,35 +44,41 @@ export default class Slider extends React.Component {
     const childrenDidChange = prevProps.children.length !== this.props.children.length;
     const needToOpenStack = !prevProps.stackIsOpened && this.props.stackIsOpened;
     const needToCloseStack = prevProps.stackIsOpened && !this.props.stackIsOpened;
-    const needToChooseStack = prevProps.activeIndex !== this.props.activeIndex;
+    const needToChooseStack = prevProps.needToSelectStackIndex !== this.props.needToSelectStackIndex;
 
     if (flickityDidBecomeActive || childrenDidChange) {
       this.refreshFlickity();
     }
     if (needToOpenStack) {
-      this.openStack();
+      this.onOpenStack();
     }
     if (needToCloseStack) {
-      this.closeStack();
+      this.onCloseStack();
     }
     if (needToChooseStack) {
-      this.chooseStack(this.props.activeIndex);
+      this.chooseStack(this.props.needToSelectStackIndex);
     }
   }
 
   getStackNodes = () => {
     const stacksWrapper = this.flickityNode.querySelector('.flickity-slider');
     const stacks = [...stacksWrapper.children];
+    const selectedStack = stacksWrapper.querySelector('.is-selected');
     const prevStack = stacksWrapper.querySelector('.stack-prev');
     const nextStack = stacksWrapper.querySelector('.stack-next');
     return {
       stacks,
+      selectedStack,
       prevStack,
       nextStack,
     };
   };
 
   onCellSelect = () => {
+    console.log('flickity onCellSelect');
+    this.setState({
+      canOpen: false,
+    });
     const bodyEl = document.body;
     bodyEl.classList.remove('item-clickable');
 
@@ -91,8 +102,26 @@ export default class Slider extends React.Component {
 
     stacks[previdx].classList.add('stack-prev');
     stacks[nextidx].classList.add('stack-next');
+    this.onSettle();
   };
 
+  onDragStart = () => {
+    console.log('flickity onDragStart');
+    this.setState({
+      canOpen: false,
+    });
+    const bodyEl = document.body;
+    bodyEl.classList.remove('item-clickable');
+  };
+
+  onSettle = () => {
+    console.log('flickity onSettle');
+    this.setState({
+      canOpen: true,
+    });
+    const bodyEl = document.body;
+    bodyEl.classList.add('item-clickable');
+  };
 
   onEndTransition = function( el, callback ) {
     // add this to not trigger eslint no-undef
@@ -110,7 +139,7 @@ export default class Slider extends React.Component {
     const transEndEventName = transEndEventNames[ Modernizr.prefixed( 'transition' ) ];
     const onEndCallbackFn = function( ev ) {
       if( support.transitions ) {
-        if( ev.target != this ) return;
+        if( ev.target !== this ) return;
         this.removeEventListener( transEndEventName, onEndCallbackFn );
       }
       if( callback && typeof callback === 'function' ) { callback.call(this); }
@@ -123,17 +152,27 @@ export default class Slider extends React.Component {
     }
   };
 
-  openStack = () => {
-    const bodyEl = document.body;
-    bodyEl.classList.add('view-full');
-    setTimeout(function() {
-      bodyEl.classList.add('move-items');
-    }, 25);
-    const stackNode = this.props.getStackNode();
-    bodyEl.style.height = stackNode.offsetHeight + 'px';
+  onOpenStack = () => {
+    const { canOpen } = this.state;
+    console.log('onOpenStack', canOpen);
+    if (canOpen) {
+      const bodyEl = document.body;
+      bodyEl.classList.add('view-full');
+      setTimeout(function() {
+        bodyEl.classList.add('move-items');
+      }, 25);
+      const { selectedStack } = this.getStackNodes();
+      bodyEl.style.height = selectedStack.offsetHeight + 'px';
+      console.log('onOpenStack', selectedStack);
+      this.flickity.unbindDrag();
+      this.flickity.options.accessibility = false;
+    }
+  };
 
-    this.flickity.unbindDrag();
-    this.flickity.options.accessibility = false;
+  scrollY = () => {
+    const docElem = window.document.documentElement;
+    console.log('scrollY', window.pageYOffset, docElem.scrollTop);
+    return window.pageYOffset || docElem.scrollTop;
   };
 
   closeStack = () => {
@@ -146,6 +185,22 @@ export default class Slider extends React.Component {
     });
     this.flickity.bindDrag();
     this.flickity.options.accessibility = true;
+  };
+
+  onCloseStack = () => {
+    // if the user scrolled down, let's first scroll all up before closing the stack.
+    const scrolled = this.scrollY();
+    const bodyEl = document.body;
+    const docElem = window.document.documentElement;
+    const isFirefox = typeof InstallTrigger !== 'undefined';
+    if(scrolled > 0) {
+      console.log('onCloseStack', scrolled);
+      smoothscroll(isFirefox ? docElem : bodyEl || docElem, 0, 500);
+      this.closeStack();
+    }
+    else {
+      this.closeStack();
+    }
   };
 
   chooseStack = (index) => {

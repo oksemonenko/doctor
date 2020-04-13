@@ -8,7 +8,6 @@ export default class SliderContainer extends Component {
 
     this.state = {
       stackIsOpened: false,
-      needToSelectStackIndex: 0,
     };
   }
 
@@ -24,19 +23,13 @@ export default class SliderContainer extends Component {
     })
   };
 
-  selectStack = (index) => {
-    this.setState({
-      needToSelectStackIndex: index,
-    })
-  };
-
   onClick = (ev, index) => {
     ev.preventDefault();
     const { stackIsOpened } = this.state;
-    const isSelected = ev.currentTarget.parentNode.classList.contains('is-selected');
-
+    const stackNode = ev.currentTarget.parentNode;
+    const isSelected = stackNode.classList.contains('is-selected');
     if (!isSelected) {
-      return this.selectStack(index);
+      return this.props.onChange(index);
     }
     if (stackIsOpened) {
       return this.closeStack();
@@ -45,14 +38,15 @@ export default class SliderContainer extends Component {
   };
 
   render() {
-    const { stacks } = this.props;
-    const { stackIsOpened, needToSelectStackIndex } = this.state;
+    const { stacks, onChange, selectedIndex } = this.props;
+    const { stackIsOpened } = this.state;
 
     return (
       <div className="stack-slider">
         <Slider
           stackIsOpened={stackIsOpened}
-          needToSelectStackIndex={needToSelectStackIndex}
+          selectedIndex={selectedIndex}
+          onChange={onChange}
           options={{
             wrapAround: true,
             imagesLoaded: true,

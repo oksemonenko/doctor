@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import Flickity from 'flickity';
 import smoothscroll from 'smoothscroll';
 import 'flickity/dist/flickity.min.css';
+import { throttle } from 'lodash';
 
 export default class Slider extends React.Component {
   constructor(props) {
@@ -24,7 +25,9 @@ export default class Slider extends React.Component {
       flickityReady: true,
     });
 
+    window.addEventListener('resize', this.onResize);
     this.flickity.on('cellSelect', this.onCellSelect);
+    // this.flickity.on('cellSelect', this.onCellSelectHandler);
     this.flickity.on('dragStart', this.onDragStart);
     this.flickity.on('settle', this.onSettle);
   }
@@ -44,10 +47,14 @@ export default class Slider extends React.Component {
     const childrenDidChange = prevProps.children.length !== this.props.children.length;
     const needToOpenStack = !prevProps.stackIsOpened && this.props.stackIsOpened;
     const needToCloseStack = prevProps.stackIsOpened && !this.props.stackIsOpened;
-    const needToChooseStack = prevProps.needToSelectStackIndex !== this.props.needToSelectStackIndex;
+
+    if (prevProps.selectedIndex !== this.props.selectedIndex) {
+      this.onSelectStack(this.props.selectedIndex);
+    }
 
     if (flickityDidBecomeActive || childrenDidChange) {
       this.refreshFlickity();
+      // this.onCellSelect(this.props.selectedIndex);
     }
     if (needToOpenStack) {
       this.onOpenStack();
@@ -55,10 +62,20 @@ export default class Slider extends React.Component {
     if (needToCloseStack) {
       this.onCloseStack();
     }
-    if (needToChooseStack) {
-      this.chooseStack(this.props.needToSelectStackIndex);
-    }
   }
+
+  // window resize
+  onResize = throttle ((ev) => {
+    // recalculate window width/height
+    const win = { width: window.innerWidth, height: window.innerHeight };
+    const bodyEl = document.body;
+    const { stacks } = this.getStackNodes();
+    // reset body height if stack is opened
+    if(bodyEl.classList.contains('view-full') ) {
+      // stack is opened
+      bodyEl.style.height = stacks[this.flickity.selectedIndex].offsetHeight + 'px';
+    }
+  }, 50);
 
   getStackNodes = () => {
     const stacksWrapper = this.flickityNode.querySelector('.flickity-slider');
@@ -74,8 +91,14 @@ export default class Slider extends React.Component {
     };
   };
 
-  onCellSelect = () => {
-    console.log('flickity onCellSelect');
+  // onCellSelectHandler = () => {
+  //   const selidx = this.flickity.selectedIndex;
+  //   console.log('onChange onCellSelectHandler', selidx);
+  //
+  //   this.props.onChange(selidx);
+  // };
+
+  onCellSelect = (index = this.flickity.selectedIndex) => {
     this.setState({
       canOpen: false,
     });
@@ -88,10 +111,9 @@ export default class Slider extends React.Component {
       nextStack,
     } = this.getStackNodes();
 
-    const selidx = this.flickity.selectedIndex;
     const cellsCount = this.flickity.cells.length;
-    const previdx = selidx > 0 ? selidx - 1 : cellsCount - 1;
-    const nextidx = selidx < cellsCount - 1 ? selidx + 1 : 0;
+    const previdx = index > 0 ? index - 1 : cellsCount - 1;
+    const nextidx = index < cellsCount - 1 ? index + 1 : 0;
 
     if(prevStack) {
       prevStack.classList.remove('stack-prev');
@@ -139,10 +161,12 @@ export default class Slider extends React.Component {
     const transEndEventName = transEndEventNames[ Modernizr.prefixed( 'transition' ) ];
     const onEndCallbackFn = function( ev ) {
       if( support.transitions ) {
-        if( ev.target !== this ) return;
+        // if( ev.target !== this ) return;
         this.removeEventListener( transEndEventName, onEndCallbackFn );
       }
-      if( callback && typeof callback === 'function' ) { callback.call(this); }
+      if( callback && typeof callback === 'function' ) {
+        callback.call(this);
+      }
     };
     if( support.transitions ) {
       el.addEventListener( transEndEventName, onEndCallbackFn );
@@ -203,7 +227,7 @@ export default class Slider extends React.Component {
     }
   };
 
-  chooseStack = (index) => {
+  onSelectStack = (index = this.flickity.selectedIndex) => {
     const { stacks } = this.getStackNodes();
 
     if(stacks[index].classList.contains('stack-prev')) {

@@ -52,6 +52,14 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+#root {
+    height: 100%;
+}
+
+.App {
+    height: 100%;
+}
+
 a {
     color: #585558;
     text-decoration: none;

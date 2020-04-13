@@ -3,7 +3,6 @@ import Item from './Item';
 
 function Stack(props) {
   const { title, items, onClick } = props;
-  console.log('stack', props);
 
   return (
     <div className="stack">

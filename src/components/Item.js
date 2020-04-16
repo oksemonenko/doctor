@@ -6,7 +6,6 @@ function Item(props) {
     <div className="item">
       <div className="item__content">
         <img src={image} alt="img01"/>
-        {/*<h3 className="item__title">{name}</h3>*/}
         <div className="item__details">
           <ul>
             <li><span>{name}</span></li>

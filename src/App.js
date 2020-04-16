@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import SliderContainer from './components/SliderContainer';
 import Hero from './components/Hero';
+import Navigation from './components/Navigation';
 import stacksData from './data/stacksData'
 
 export default  class App extends Component {
@@ -27,7 +28,8 @@ export default  class App extends Component {
         <div className="container">
           <Hero />
           <header className="codrops-header">
-            <h1 className="codrops-title">Dr. Jhey <span>Hombre simple</span></h1>
+            <h1 className="codrops-title"><a href='#'>Dr. Jhey </a><div>Hombre simple</div></h1>
+            <Navigation />
           </header>
           <SliderContainer
             stacks={stacksData}

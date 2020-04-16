@@ -1,5 +1,6 @@
 import React from 'react';
 import Item from './Item';
+import Footer from "./Footer";
 
 function Stack(props) {
   const { title, items, onClick } = props;
@@ -22,6 +23,7 @@ function Stack(props) {
           );
         },
       )}
+      <Footer />
     </div>
   );
 }

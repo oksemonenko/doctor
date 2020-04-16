@@ -52,6 +52,14 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+#root {
+    height: 100%;
+}
+
+.App {
+    height: 100%;
+}
+
 a {
     color: #585558;
     text-decoration: none;
@@ -105,7 +113,19 @@ button:focus {
     padding: 0.5em;
 }
 
-.codrops-header h1 span {
+.codrops-title a {
+    color: #fff;
+    font-size: 1em;
+    margin: 0 auto 0 0;
+    padding: 0.5em;
+}
+
+.codrops-title a:hover {
+    color: #ef5350;
+}
+
+.codrops-header h1 div {
+    margin-top: 10px;
     color: #585558;
 }
 
@@ -171,8 +191,9 @@ button:focus {
 }
 
 .menu__item {
+    font-size: 30px;
     font-weight: bold;
-    margin: 0 1em;
+    margin: 0 0.5em;
 }
 
 .menu__item--current {
@@ -584,7 +605,7 @@ button:focus {
     display: block;
     padding: 3px 0;
     color: #9d9d9d;
-    white-space: nowrap;
+    /*white-space: nowrap;*/
     opacity: 0;
     -webkit-transform: translate3d(0,20px,0);
     transform: translate3d(0,20px,0);
@@ -744,16 +765,12 @@ button:focus {
     .stack-title {
         font-size: 1.75em;
     }
-    .menu__item {
-        display: block;
-        background: #4F4E4E;
-        overflow: hidden;
-        height: 4px;
-        width: 30px;
-        margin: 3px 10px 0 0;
+    .menu {
+        display: flex;
+        flex-direction: column;
     }
-    .menu__item span {
-        display: none;
+    .menu__item {
+        margin: 0.2em;
     }
     .codrops-header {
         padding: 0.5em 0;

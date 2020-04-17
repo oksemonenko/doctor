@@ -29,7 +29,7 @@ export default class SliderContainer extends Component {
     const stackNode = ev.currentTarget.parentNode;
     const isSelected = stackNode.classList.contains('is-selected');
     if (!isSelected) {
-      return this.props.onChange(index);
+      return this.props.onChange(index, true);
     }
     if (stackIsOpened) {
       return this.closeStack();
@@ -38,7 +38,7 @@ export default class SliderContainer extends Component {
   };
 
   render() {
-    const { stacks, onChange, selectedIndex } = this.props;
+    const { stacks, onChange, selectedIndex, count } = this.props;
     const { stackIsOpened } = this.state;
 
     return (
@@ -46,6 +46,7 @@ export default class SliderContainer extends Component {
         <Slider
           stackIsOpened={stackIsOpened}
           selectedIndex={selectedIndex}
+          count={count}
           onChange={onChange}
           options={{
             wrapAround: true,

@@ -32,7 +32,7 @@ export default  class App extends Component {
         <div className="container">
           <Hero />
           <header className="codrops-header">
-            <h1 className="codrops-title"><a href='#'>Dr. Jhey </a><div>Hombre simple</div></h1>
+            <h1 className="codrops-title">Dr. Jhey<div>Hombre simple</div></h1>
             <Navigation />
           </header>
           <SliderContainer

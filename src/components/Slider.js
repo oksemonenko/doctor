@@ -48,7 +48,8 @@ export default class Slider extends React.Component {
     const needToOpenStack = !prevProps.stackIsOpened && this.props.stackIsOpened;
     const needToCloseStack = prevProps.stackIsOpened && !this.props.stackIsOpened;
 
-    if (prevProps.selectedIndex !== this.props.selectedIndex) {
+    if (prevProps.selectedIndex !== this.props.selectedIndex
+      || prevProps.count !== this.props.count) {
       this.onSelectStack(this.props.selectedIndex);
     }
 

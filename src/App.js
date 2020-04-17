@@ -11,17 +11,21 @@ export default  class App extends Component {
 
     this.state = {
       selectedIndex: 0,
+      count: 0,
     };
   }
 
-  onChange = (index) => {
+  onChange = (index, updateCount = false) => {
+    const { count } = this.state;
+    const updatedCount = updateCount ? count + 1 : count;
     this.setState({
       selectedIndex: index,
+      count: updatedCount,
     })
   };
 
   render() {
-    const { selectedIndex } = this.state;
+    const { selectedIndex, count } = this.state;
 
     return (
       <div className="App">
@@ -34,6 +38,7 @@ export default  class App extends Component {
           <SliderContainer
             stacks={stacksData}
             selectedIndex={selectedIndex}
+            count={count}
             onChange={this.onChange}
           />
           <img className="loader" src="../src/img/three-dots.svg" width="60" alt="Loader image"/>

@@ -711,6 +711,7 @@ button:focus {
     font-size: 1em;
     font-weight: bold;
     padding: 1em 0;
+    margin-bottom: 0;
     color: #7E7D7D;
 }
 

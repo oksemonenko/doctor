@@ -1,7 +1,9 @@
 import Medico1 from '../img/type1/Medico1.jpg'
 import Medico2 from '../img/type1/Medico2.jpg'
 import Medico3 from '../img/type1/Medico3.jpeg'
-import Medico4 from '../img/type1/Medico4.jpg'
+import Medico4 from '../img/type1/Medico4.jpeg'
+import Medico5 from '../img/type1/Medico5.jpeg'
+import Medico6 from '../img/type1/Medico6.jpg'
 import Musico1 from '../img/type2/Musico1.jpeg'
 import Musico2 from '../img/type2/Musico2.jpeg'
 import Musico3 from '../img/type2/Musico3.jpg'
@@ -23,6 +25,7 @@ import Bailarin4 from '../img/type5/Bailarin4.jpg'
 import Elegante1 from '../img/type6/Elegante1.jpg'
 import Elegante2 from '../img/type6/Elegante2.jpg'
 import Elegante3 from '../img/type6/Elegante3.jpg'
+import Elegante4 from '../img/type6/Elegante4.jpg'
 import Comedian1 from '../img/type7/Comedian1.jpg'
 import Comedian2 from '../img/type7/Comedian2.jpg'
 import Comedian3 from '../img/type7/Comedian3.jpg'
@@ -55,6 +58,20 @@ const stacksData = [
       {
         index: 3,
         image: Medico4,
+        name: 'En medicina, la medicina principal es el médico mismo',
+        description: 'Antonio de Campini',
+
+      },
+      {
+        index: 4,
+        image: Medico5,
+        name: 'La fuerza de voluntad es lo más importante en medicina',
+        description: 'Paracelso',
+
+      },
+      {
+        index: 5,
+        image: Medico6,
         name: 'El doctor es filósofo. Porque no hay mucha diferencia entre sabiduría y medicina',
         description: 'Hipócrates',
 
@@ -165,7 +182,7 @@ const stacksData = [
   },
   {
     title: 'Bailarín',
-    index: 0,
+    index: 4,
     items: [
       {
         index: 0,
@@ -195,7 +212,7 @@ const stacksData = [
   },
   {
     title: 'El Elegante',
-    index: 0,
+    index: 5,
     items: [
       {
         index: 0,
@@ -216,11 +233,17 @@ const stacksData = [
           'pero con nuestras acciones y palabras demostramos su presencia en nosotros',
         description: 'Ruth Hogan',
       },
+      {
+        index: 3,
+        image: Elegante4,
+        name: 'La elegancia tiene una voz baja',
+        description: 'Sophia Loren',
+      },
     ],
   },
   {
     title: 'Comedian',
-    index: 0,
+    index: 6,
     items: [
       {
         index: 0,
